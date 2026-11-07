@@ -20,3 +20,14 @@ DEE HWA LIONG ACADEMY aims to achieve its vision by developing young learners in
 • committing itself to be a well-respected leading institution of learning with highly competent personnel who are committed to develop God-fearing, morally upright, self-reliant, socially responsible and well-disciplined individuals. notes
 VISION 
 Dee Hwa Liong Academy envisions itself as a center for academic excellence established for the purpose of molding the Filipino youth for the service of God, country and humanity.
+
+
+
+
+
+git init -b main
+git add .
+git commit -m "Initial enrollment website"
+git remote add origin https://github.com/voquizshes/Dee-Hwa-Liong-Academy
+git push -u origin main
+make the enrollment form a front for a google form, something like the website that i will host in GitHub will send the data to a google form then that google form will input the answers to a spreadsheet, what do i need to or can you do this all on your own
