@@ -26,7 +26,8 @@
         </button>
         <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">
           <a href="#about">Our school</a>
-          <a href="#learning">Student life</a>
+          <a href="#community">Student life</a>
+          <a href="#news">News &amp; events</a>
           <a href="#enrollment">Enrollment</a>
           <a class="nav-cta" href="#enrollment">Start an inquiry <span aria-hidden="true">↗</span></a>
         </nav>
@@ -37,13 +38,18 @@
       <section class="hero" id="home">
         <div class="hero-copy">
           <p class="eyebrow"><span class="eyebrow-line"></span> Chinese heritage. Filipino futures.</p>
+          <p class="enrollment-status"><span aria-hidden="true"></span> Enrollment is open</p>
           <h1>Academic excellence.<br><em>Purposeful lives.</em></h1>
-          <p class="hero-description">Dee Hwa Liong Academy is a Chinese school in Pasig, Philippines, dedicated to forming young people for the service of God, country, and humanity.</p>
+          <p class="hero-description">A welcoming school community where Chinese heritage, Filipino values, and a love of learning prepare young people to serve God, country, and humanity.</p>
           <div class="hero-actions">
             <a class="button button-light" href="#enrollment">Explore enrollment <span aria-hidden="true">→</span></a>
             <a class="text-link" href="#about">Get to know us <span aria-hidden="true">↓</span></a>
           </div>
           <p class="hero-note"><span class="note-dot"></span> Sta. Maria Compound, Santolan, Pasig</p>
+          <div class="hero-highlights" aria-label="School highlights">
+            <span><strong>One community</strong><small>Rooted in culture</small></span>
+            <span><strong>Room to grow</strong><small>Learning beyond class</small></span>
+          </div>
         </div>
         <div class="hero-visual">
           <div class="photo-frame">
@@ -108,7 +114,7 @@
         </div>
       </section>
 
-      <section class="learning-section" id="learning">
+      <section class="learning-section community-section" id="community">
         <div class="section-wrap learning-inner">
           <div class="learning-copy">
             <p class="eyebrow eyebrow-dark">Beyond the classroom</p>
@@ -122,30 +128,58 @@
             <article><span class="list-index">03</span><div><h3>Celebrate cultural traditions</h3><p>The school celebrates festivals such as the Ghost Festival.</p></div><span class="list-arrow" aria-hidden="true">↗</span></article>
           </div>
         </div>
+        <div class="section-wrap community-gallery" aria-labelledby="gallery-title">
+          <div class="gallery-heading">
+            <div>
+              <p class="eyebrow eyebrow-dark">A glimpse of DHLA</p>
+              <h2 id="gallery-title">School is made of<br><em>moments together.</em></h2>
+            </div>
+            <p>From creative projects to celebrations and everyday friendships, students make memories as part of the Dee Hwa Liong Academy community.</p>
+          </div>
+          <div class="gallery-carousel" data-carousel="gallery">
+            <div class="carousel-viewport"><div class="gallery-grid carousel-track" data-slides aria-live="polite"><p class="carousel-message">Loading school photos…</p></div></div>
+            <div class="gallery-controls carousel-controls">
+              <span class="carousel-hint">Drag or swipe</span>
+              <button class="carousel-button" type="button" data-previous aria-label="Previous school photo">←</button>
+              <span class="carousel-count" data-count aria-live="polite"></span>
+              <button class="carousel-button" type="button" data-next aria-label="Next school photo">→</button>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section class="gallery-section section-wrap" id="community" aria-labelledby="gallery-title">
-        <div class="gallery-heading">
+      <section class="updates-section section-wrap" id="news" aria-labelledby="updates-title">
+        <div class="updates-heading">
           <div>
-            <p class="eyebrow eyebrow-dark">A glimpse of DHLA</p>
-            <h2 id="gallery-title">School is made of<br><em>moments together.</em></h2>
+            <p class="eyebrow eyebrow-dark">Life at DHLA</p>
+            <h2 id="updates-title">The latest from<br><em>our school community.</em></h2>
           </div>
-          <p>From creative projects to celebrations and everyday friendships, students make memories as part of the Dee Hwa Liong Academy community.</p>
+          <p>Catch up on the stories, celebrations, and moments bringing Deehwalians together.</p>
         </div>
-        <div class="gallery-grid">
-          <figure class="gallery-card">
-            <div class="gallery-image"><img src="images/school-life/school-celebration.jpg" alt="Students taking part in a school celebration" loading="lazy" decoding="async"></div>
-            <figcaption><span>Culture &amp; celebration</span><span aria-hidden="true">01</span></figcaption>
-          </figure>
-          <figure class="gallery-card">
-            <div class="gallery-image"><img src="images/school-life/student-art.jpg" alt="A student creating an artwork during a school activity" loading="lazy" decoding="async"></div>
-            <figcaption><span>Creativity in action</span><span aria-hidden="true">02</span></figcaption>
-          </figure>
-          <figure class="gallery-card">
-            <div class="gallery-image"><img src="images/school-life/school-community.jpg" alt="Students sharing a moment together at school" loading="lazy" decoding="async"></div>
-            <figcaption><span>Our school community</span><span aria-hidden="true">03</span></figcaption>
-          </figure>
-        </div>
+        <section class="update-carousel" aria-labelledby="news-title" data-carousel="news">
+          <div class="carousel-heading">
+            <div><span class="carousel-kicker">STORIES &amp; ANNOUNCEMENTS</span><h3 id="news-title">Latest news</h3></div>
+            <div class="carousel-controls">
+              <span class="carousel-hint">Drag or swipe</span>
+              <button class="carousel-button" type="button" data-previous aria-label="Previous news story">←</button>
+              <span class="carousel-count" data-count aria-live="polite"></span>
+              <button class="carousel-button" type="button" data-next aria-label="Next news story">→</button>
+            </div>
+          </div>
+          <div class="carousel-viewport"><div class="carousel-track" data-slides aria-live="polite"><p class="carousel-message">Loading school news…</p></div></div>
+        </section>
+        <section class="update-carousel events-carousel" aria-labelledby="events-title" data-carousel="events">
+          <div class="carousel-heading">
+            <div><span class="carousel-kicker">CAMPUS CALENDAR</span><h3 id="events-title">Recent school events</h3></div>
+            <div class="carousel-controls">
+              <span class="carousel-hint">Drag or swipe</span>
+              <button class="carousel-button" type="button" data-previous aria-label="Previous school event">←</button>
+              <span class="carousel-count" data-count aria-live="polite"></span>
+              <button class="carousel-button" type="button" data-next aria-label="Next school event">→</button>
+            </div>
+          </div>
+          <div class="carousel-viewport"><div class="carousel-track" data-slides aria-live="polite"><p class="carousel-message">Loading school events…</p></div></div>
+        </section>
       </section>
 
       <section class="enrollment-section section-wrap" id="enrollment">
@@ -162,7 +196,7 @@
             <article class="step"><span class="step-number">02</span><div><h3>Ask about enrollment</h3><p>Request the latest requirements, grade offerings, and enrollment schedule directly from the school.</p></div></article>
             <article class="step"><span class="step-number">03</span><div><h3>Find the academy</h3><p>Sta. Maria Compound Phase 4, Marcos Hi-way, Santolan, Pasig, Philippines 1610.</p></div></article>
           </div>
-          <form class="inquiry-form" id="inquiry-form" action="https://docs.google.com/forms/d/e/1FAIpQLSd4diHGpYbc2F1xBsvnhcep1Gwej70uXtsUgeBL7k_y_dfuPQ/formResponse" method="post" target="_blank" rel="noopener">
+          <form class="inquiry-form" id="inquiry-form" action="https://docs.google.com/forms/d/e/1FAIpQLSd4diHGpYbc2F1xBsvnhcep1Gwej70uXtsUgeBL7k_y_dfuPQ/formResponse" method="post" target="google-form-response">
             <div class="form-heading"><span class="form-step">ENROLLMENT INQUIRY</span><h3>Let’s start a conversation.</h3><p>Fields marked <span aria-hidden="true">*</span> are required.</p></div>
             <div class="form-row">
               <label for="parent-name">Parent or guardian name <span aria-hidden="true">*</span><input id="parent-name" name="entry.2005620554" type="text" autocomplete="off" placeholder="Sample name" required></label>
@@ -195,10 +229,11 @@
                 </select>
               </label>
             </div>
-            <button class="button button-submit" type="submit">Continue to Google Forms <span aria-hidden="true">↗</span></button>
-            <p class="form-disclaimer">Google Forms opens in a new tab. <a href="mailto:deehwaliongacademy@gmail.com">Contact the academy</a>.</p>
+            <button class="button button-submit" type="submit">Send inquiry <span aria-hidden="true">→</span></button>
+            <p class="form-disclaimer">Your inquiry is sent without leaving this page. <a href="mailto:deehwaliongacademy@gmail.com">Contact the academy</a>.</p>
             <div class="form-feedback" id="form-feedback" role="status" aria-live="polite" tabindex="-1" hidden></div>
           </form>
+          <iframe class="form-response-frame" name="google-form-response" title="Google Forms submission response" hidden></iframe>
         </div>
       </section>
 
@@ -218,9 +253,9 @@
           <p>Sta. Maria Compound Phase 4,<br>Marcos Hi-way, Santolan, Pasig, Philippines 1610</p>
           <a href="mailto:deehwaliongacademy@gmail.com">deehwaliongacademy@gmail.com</a>
         </div>
-        <div class="footer-links"><a href="#about">Our school</a><a href="#mission">Mission &amp; vision</a><a href="#learning">Student life</a><a href="#enrollment">Enrollment</a></div>
+        <div class="footer-links"><a href="#about">Our school</a><a href="#mission">Mission &amp; vision</a><a href="#community">Student life</a><a href="#news">News &amp; events</a><a href="#enrollment">Enrollment</a></div>
       </div>
-      <div class="footer-bottom"><span>© 2026 Dee Hwa Liong Academy</span><span>Research mockup — use fictional details only. Submissions are sent to the linked Google Form and Sheet.</span></div>
+      <div class="footer-bottom"><span>© 2026 Dee Hwa Liong Academy</span><span>Submissions are sent to the academy’s Google Form.</span></div>
     </footer>
     <a class="back-to-top" href="#home" aria-label="Back to top" hidden>↑</a>
   </body>

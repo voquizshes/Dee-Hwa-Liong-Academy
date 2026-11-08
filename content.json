@@ -1,0 +1,160 @@
+{
+  "news": [
+    {
+      "title": "Deehwalian Gazette holds journalism ethics training",
+      "date": "2026-11-07",
+      "dateLabel": "November 7, 2026",
+      "category": "Student publications",
+      "description": "Campus reporters took part in a journalism ethics training led by guest speaker Ms. Rica Mae Macawile, revisiting the responsibility and purpose of student journalism.",
+      "image": "images/news/News_Gazzete-Training.JPG",
+      "imageAlt": "Deehwalian Gazette journalism ethics training"
+    },
+    {
+      "title": "DeeCORE Multimedia Society recruitment",
+      "date": "2026-10-12",
+      "dateLabel": "Applications closed October 12, 2026",
+      "category": "Clubs & organizations",
+      "description": "DeeCORE invited students interested in video editing, scriptwriting, graphic design, digital illustration, and content engagement to join the multimedia society. This recruitment deadline has passed.",
+      "image": "images/news/News_MMC-Recruitment.JPG",
+      "imageAlt": "DeeCORE Multimedia Society recruitment announcement",
+      "link": "https://m.me/j/TdILK7QY3bEbJOOn/",
+      "linkLabel": "Message DeeCORE"
+    },
+    {
+      "title": "Dear Deehwalians: a space for kind words",
+      "date": "2026-09-29",
+      "dateLabel": "September 29, 2026",
+      "category": "Student Council",
+      "description": "The Student Council launched an anonymous NGL dropbox for wholesome messages, encouragement, and appreciation. Students are encouraged to keep every message kind and respectful.",
+      "image": "images/news/News_SC-NGL.JPG",
+      "imageAlt": "Student Council announcement for the Dear Deehwalians message dropbox",
+      "link": "https://ngl.link/deardeehwalians",
+      "linkLabel": "Visit Dear Deehwalians"
+    },
+    {
+      "title": "Bote Para Kay Teacher brings voting and recycling together",
+      "date": "2026-09-27",
+      "dateLabel": "September 27, 2026",
+      "category": "Student Council & YES-O",
+      "description": "The Student Council and YES-O invited students to vote for their favorite teachers by donating plastic bottles ahead of Teachers’ Day, combining recognition with environmental awareness.",
+      "image": "images/news/News_SC-Bote-Para-Sa-Teacher.JPG",
+      "imageAlt": "Student Council and YES-O Bote Para Kay Teacher campaign"
+    }
+  ],
+  "events": [
+    {
+      "title": "Mental Health Awareness Program",
+      "date": "2026-11-04",
+      "dateLabel": "November 4, 2026",
+      "category": "Student wellbeing",
+      "description": "The school community came together for a program focused on mental health awareness and student wellbeing.",
+      "image": "images/events/Event_Mental-Health-Seminar.JPG",
+      "imageAlt": "Students attending the Mental Health Awareness Program"
+    },
+    {
+      "title": "United Nations Celebration",
+      "date": "2026-10-30",
+      "dateLabel": "October 30, 2026",
+      "category": "Culture & community",
+      "description": "Students celebrated the United Nations and the cultures that bring communities around the world together.",
+      "image": "images/events/Event_United-Nations.JPG",
+      "imageAlt": "Students taking part in the United Nations celebration"
+    },
+    {
+      "title": "Card Distribution",
+      "date": "2026-10-09",
+      "dateLabel": "October 9, 2026",
+      "category": "School community",
+      "description": "Families and students gathered for card distribution and a school progress check-in.",
+      "image": "images/events/Event_Card-Distribution.JPG",
+      "imageAlt": "Families at the card distribution"
+    },
+    {
+      "title": "Teachers’ Day Celebration — G11, ECCD–JHS",
+      "date": "2026-10-01",
+      "dateLabel": "October 1, 2026",
+      "category": "Teachers’ Day",
+      "description": "Students from Grade 11 and ECCD through JHS celebrated and showed appreciation for their teachers.",
+      "image": "images/events/Event_Teachers-Day-G11.JPG",
+      "imageAlt": "Teachers’ Day Celebration for Grade 11 and ECCD through JHS"
+    },
+    {
+      "title": "Teachers’ Day Celebration — G12",
+      "date": "2026-09-30",
+      "dateLabel": "September 30, 2026",
+      "category": "Teachers’ Day",
+      "description": "Grade 12 students celebrated their teachers and the role they play in the school community.",
+      "image": "images/events/Event_Teachers-Day-G12.JPG",
+      "imageAlt": "Teachers’ Day Celebration for Grade 12"
+    },
+    {
+      "title": "National Drug Education Program Seminar",
+      "date": "2026-09-23",
+      "dateLabel": "September 23, 2026",
+      "category": "Student wellbeing",
+      "description": "Students joined a National Drug Education Program seminar promoting awareness and informed, healthy choices.",
+      "image": "images/events/Event_NDEP-Seminar.JPG",
+      "imageAlt": "Students attending the National Drug Education Program seminar"
+    },
+    {
+      "title": "Denim and Shimmer — Grade 11 Acquaintance Party",
+      "date": "2026-09-18",
+      "dateLabel": "September 18, 2026",
+      "category": "Student life",
+      "description": "Grade 11 students got to know one another at the Denim and Shimmer acquaintance party.",
+      "image": "images/events/Event_Denim-And-Shimmer.JPG",
+      "imageAlt": "Grade 11 students at the Denim and Shimmer acquaintance party"
+    },
+    {
+      "title": "Parent–Teacher Conference for Grade 11",
+      "date": "2026-06-19",
+      "dateLabel": "June 19, 2026",
+      "category": "Family & school",
+      "description": "Parents and teachers of Grade 11 students met to discuss student progress and strengthen the home–school partnership.",
+      "image": "images/events/Event_Parent-Teacher-Conference.JPG",
+      "imageAlt": "Parents and teachers at the Grade 11 conference"
+    }
+  ],
+  "gallery": [
+    {
+      "title": "Culture & celebration",
+      "image": "images/school-life/school-celebration.jpg",
+      "imageAlt": "Students taking part in a school celebration"
+    },
+    {
+      "title": "Creativity in action",
+      "image": "images/school-life/student-art.jpg",
+      "imageAlt": "A student creating an artwork during a school activity"
+    },
+    {
+      "title": "Our school community",
+      "image": "images/school-life/school-community.jpg",
+      "imageAlt": "Students sharing a moment together at school"
+    },
+    {
+      "title": "Mental health & wellbeing",
+      "image": "images/events/Event_Mental-Health-Seminar.JPG",
+      "imageAlt": "Students taking part in the school mental health seminar"
+    },
+    {
+      "title": "United Nations celebration",
+      "image": "images/events/Event_United-Nations.JPG",
+      "imageAlt": "Students celebrating the United Nations at school"
+    },
+    {
+      "title": "Teachers’ Day — Grade 12",
+      "image": "images/events/Event_Teachers-Day-G12.JPG",
+      "imageAlt": "Grade 12 students celebrating Teachers’ Day"
+    },
+    {
+      "title": "Denim and Shimmer",
+      "image": "images/events/Event_Denim-And-Shimmer.JPG",
+      "imageAlt": "Grade 11 students at their acquaintance party"
+    },
+    {
+      "title": "A school community that cares",
+      "image": "images/events/Event_Parent-Teacher-Conference.JPG",
+      "imageAlt": "Parents and teachers meeting at school"
+    }
+  ]
+}
