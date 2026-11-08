@@ -156,5 +156,35 @@
       "image": "images/events/Event_Parent-Teacher-Conference.JPG",
       "imageAlt": "Parents and teachers meeting at school"
     }
+  ],
+  "clubs": [
+    {
+      "name": "DeeCORE Multimedia Society",
+      "category": "Multimedia & creative arts",
+      "description": "A home for student creators working across video editing, script and story development, graphic design, digital illustration, and social content.",
+      "logo": "images/clubs/deecore-multimedia-society.jpg",
+      "logoAlt": "DeeCORE Multimedia Society logo"
+    },
+    {
+      "name": "DHLA Gazette",
+      "category": "Student publication",
+      "description": "The academy’s SHS student publication. Campus reporters develop their journalism skills and cover stories with an emphasis on truth, precision, and impartiality.",
+      "logo": "images/clubs/dhla-gazette.jpg",
+      "logoAlt": "DHLA Gazette student publication logo"
+    },
+    {
+      "name": "DeeCoLens Photography Club",
+      "category": "Photography",
+      "description": "A photography club for students interested in capturing school life and telling stories through images.",
+      "logo": "images/clubs/deecolens-photography-club.jpg",
+      "logoAlt": "DeeCoLens Photography Club logo"
+    },
+    {
+      "name": "Student Council",
+      "category": "Student leadership",
+      "description": "Student leaders bring classmates together through school initiatives—from positive-message projects to environmental awareness activities.",
+      "logo": "images/clubs/student-council.jpg",
+      "logoAlt": "Dee Hwa Liong Academy Student Council logo"
+    }
   ]
 }

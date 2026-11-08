@@ -29,10 +29,27 @@
           <a href="#community">Student life</a>
           <a href="#news">News &amp; events</a>
           <a href="#enrollment">Enrollment</a>
+          <button class="account-login-button" id="account-login-trigger" type="button">Account login</button>
           <a class="nav-cta" href="#enrollment">Start an inquiry <span aria-hidden="true">↗</span></a>
         </nav>
       </div>
     </header>
+
+    <dialog class="account-dialog" id="account-login-dialog" aria-labelledby="account-login-title">
+      <form class="account-login-form" id="account-login-form">
+        <button class="account-dialog-close" id="account-login-close" type="button" aria-label="Close account login">×</button>
+        <span class="form-step">DEMO ACCOUNT</span>
+        <h2 id="account-login-title">View your enrollment status.</h2>
+        <p>Enter the email address used for your inquiry. This demo checks the public spreadsheet and does not verify your identity.</p>
+        <label for="account-login-email">Email address
+          <input id="account-login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </label>
+        <button class="button button-submit" id="account-login-submit" type="submit">Continue with email <span aria-hidden="true">→</span></button>
+        <button class="account-logout-button" id="account-logout" type="button" hidden>Sign out</button>
+        <p class="demo-access-note">Anyone can view every row in the published sample spreadsheet.</p>
+        <div class="account-login-feedback" id="account-login-feedback" role="status" aria-live="polite" hidden></div>
+      </form>
+    </dialog>
 
     <main id="main">
       <section class="hero" id="home">
@@ -123,9 +140,21 @@
             <a class="button button-outline" href="#enrollment">Ask about enrollment <span aria-hidden="true">→</span></a>
           </div>
           <div class="learning-list">
-            <article><span class="list-index">01</span><div><h3>Explore club options</h3><p>Students can choose from a variety of extracurricular clubs.</p></div><span class="list-arrow" aria-hidden="true">↗</span></article>
+            <article><span class="list-index">01</span><div><h3>Make something together</h3><p>Join clubs that create, report, lead, and bring student ideas to life.</p></div><span class="list-arrow" aria-hidden="true">↗</span></article>
             <article><span class="list-index">02</span><div><h3>Bring an idea to life</h3><p>Students have the liberty to create a club if they want to.</p></div><span class="list-arrow" aria-hidden="true">↗</span></article>
             <article><span class="list-index">03</span><div><h3>Celebrate cultural traditions</h3><p>The school celebrates festivals such as the Ghost Festival.</p></div><span class="list-arrow" aria-hidden="true">↗</span></article>
+          </div>
+        </div>
+        <div class="section-wrap clubs-section" aria-labelledby="clubs-title">
+          <div class="clubs-heading">
+            <div>
+              <p class="eyebrow eyebrow-dark">Featured clubs &amp; organizations</p>
+              <h2 id="clubs-title">Find your<br><em>kind of crew.</em></h2>
+            </div>
+            <p>From campus stories to photography, multimedia, and student leadership, there are many ways to find your people and make an impact.</p>
+          </div>
+          <div class="club-grid" data-clubs aria-live="polite">
+            <p class="club-message">Loading featured clubs…</p>
           </div>
         </div>
         <div class="section-wrap community-gallery" aria-labelledby="gallery-title">
@@ -196,7 +225,9 @@
             <article class="step"><span class="step-number">02</span><div><h3>Ask about enrollment</h3><p>Request the latest requirements, grade offerings, and enrollment schedule directly from the school.</p></div></article>
             <article class="step"><span class="step-number">03</span><div><h3>Find the academy</h3><p>Sta. Maria Compound Phase 4, Marcos Hi-way, Santolan, Pasig, Philippines 1610.</p></div></article>
           </div>
-          <form class="inquiry-form" id="inquiry-form" action="https://docs.google.com/forms/d/e/1FAIpQLSd4diHGpYbc2F1xBsvnhcep1Gwej70uXtsUgeBL7k_y_dfuPQ/formResponse" method="post" target="google-form-response">
+          <div class="enrollment-access">
+            <div class="status-feedback" id="status-feedback" role="status" aria-live="polite" tabindex="-1" hidden></div>
+            <form class="inquiry-form" id="inquiry-form" action="https://docs.google.com/forms/d/e/1FAIpQLSd4diHGpYbc2F1xBsvnhcep1Gwej70uXtsUgeBL7k_y_dfuPQ/formResponse" method="post" target="google-form-response">
             <div class="form-heading"><span class="form-step">ENROLLMENT INQUIRY</span><h3>Let’s start a conversation.</h3><p>Fields marked <span aria-hidden="true">*</span> are required.</p></div>
             <div class="form-row">
               <label for="parent-name">Parent or guardian name <span aria-hidden="true">*</span><input id="parent-name" name="entry.2005620554" type="text" autocomplete="off" placeholder="Sample name" required></label>
@@ -230,9 +261,10 @@
               </label>
             </div>
             <button class="button button-submit" type="submit">Send inquiry <span aria-hidden="true">→</span></button>
-            <p class="form-disclaimer">Your inquiry is sent without leaving this page. <a href="mailto:deehwaliongacademy@gmail.com">Contact the academy</a>.</p>
+            <p class="form-disclaimer">We check the enrollment spreadsheet before sending to avoid duplicate inquiries. <a href="mailto:deehwaliongacademy@gmail.com">Contact the academy</a>.</p>
             <div class="form-feedback" id="form-feedback" role="status" aria-live="polite" tabindex="-1" hidden></div>
-          </form>
+            </form>
+          </div>
           <iframe class="form-response-frame" name="google-form-response" title="Google Forms submission response" hidden></iframe>
         </div>
       </section>
@@ -255,7 +287,7 @@
         </div>
         <div class="footer-links"><a href="#about">Our school</a><a href="#mission">Mission &amp; vision</a><a href="#community">Student life</a><a href="#news">News &amp; events</a><a href="#enrollment">Enrollment</a></div>
       </div>
-      <div class="footer-bottom"><span>© 2026 Dee Hwa Liong Academy</span><span>Submissions are sent to the academy’s Google Form.</span></div>
+      <div class="footer-bottom"><span>© 2026 Dee Hwa Liong Academy</span><span>Inquiries are checked against the public demo spreadsheet before submission.</span></div>
     </footer>
     <a class="back-to-top" href="#home" aria-label="Back to top" hidden>↑</a>
   </body>

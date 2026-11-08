@@ -35,6 +35,8 @@ const revealTargets = document.querySelectorAll([
   ".mission-card",
   ".learning-copy",
   ".learning-list article",
+  ".clubs-heading > *",
+  ".club-card",
   ".gallery-heading > *",
   ".gallery-card",
   ".enrollment-top > *",
@@ -108,12 +110,21 @@ updatePageChrome();
 
 const inquiryForm = document.querySelector("#inquiry-form");
 const formFeedback = document.querySelector("#form-feedback");
+const statusFeedback = document.querySelector("#status-feedback");
 const gradeSelect = document.querySelector("#grade");
 const strandRow = document.querySelector("#strand-row");
 const strandSelect = document.querySelector("#strand");
 const submitButton = inquiryForm.querySelector('button[type="submit"]');
 const responseFrame = document.querySelector('iframe[name="google-form-response"]');
+const accountLoginTrigger = document.querySelector("#account-login-trigger");
+const accountLoginDialog = document.querySelector("#account-login-dialog");
+const accountLoginForm = document.querySelector("#account-login-form");
+const accountLoginEmail = document.querySelector("#account-login-email");
+const accountLoginSubmit = document.querySelector("#account-login-submit");
+const accountLogoutButton = document.querySelector("#account-logout");
+const accountLoginFeedback = document.querySelector("#account-login-feedback");
 let submissionInProgress = false;
+let statusCheckInProgress = false;
 
 function updateStrandField() {
   const isSeniorHigh = gradeSelect.value === "SHS";
@@ -129,19 +140,257 @@ function updateStrandField() {
 gradeSelect.addEventListener("change", updateStrandField);
 updateStrandField();
 
-inquiryForm.addEventListener("submit", (event) => {
-  submissionInProgress = true;
-  submitButton.disabled = true;
-  formFeedback.textContent = "Sending your inquiry to Google Forms…";
-  formFeedback.hidden = false;
+const applicationStatusCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdLE3Iwag4JTKcZs8JPrwL2Gj4L9eQG6GycI-1BOqQMvcEzcozHvYJ7lVTk_rUJW5NmSS2Bx3JAO-t/pub?output=csv";
+const inquiryEmailInput = inquiryForm.querySelector("#email");
+const accountEmailStorageKey = "dhla-demo-account-email";
+
+function parseCsvRows(csv) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let insideQuotes = false;
+
+  for (let index = 0; index < csv.length; index += 1) {
+    const character = csv[index];
+
+    if (insideQuotes) {
+      if (character === '"' && csv[index + 1] === '"') {
+        field += '"';
+        index += 1;
+      } else if (character === '"') {
+        insideQuotes = false;
+      } else {
+        field += character;
+      }
+    } else if (character === '"' && field.length === 0) {
+      insideQuotes = true;
+    } else if (character === ",") {
+      row.push(field);
+      field = "";
+    } else if (character === "\n" || character === "\r") {
+      if (character === "\r" && csv[index + 1] === "\n") index += 1;
+      row.push(field);
+      if (row.some((value) => value.trim() !== "")) rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += character;
+    }
+  }
+
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    if (row.some((value) => value.trim() !== "")) rows.push(row);
+  }
+
+  return rows;
+}
+
+function displayApplicationStatus(kind, status, detail) {
+  statusFeedback.className = `status-feedback status-${kind}`;
+  const badge = makeElement("span", "status-badge", status);
+  const message = makeElement("p", "status-detail", detail);
+  statusFeedback.replaceChildren(badge, message);
+  statusFeedback.hidden = false;
+}
+
+async function lookupApplication(email) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 12000);
+  let response;
+  try {
+    response = await fetch(applicationStatusCsvUrl, {
+      cache: "no-store",
+      signal: controller.signal,
+    });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+  if (!response.ok) {
+    throw new Error(`The published spreadsheet returned ${response.status}.`);
+  }
+
+  const rows = parseCsvRows(await response.text());
+  const headers = rows.shift()?.map((header) => header.trim().replace(/^\uFEFF/, "").toLowerCase()) ?? [];
+  const emailColumn = headers.indexOf("email address");
+  const statusColumn = headers.indexOf("status");
+  if (emailColumn < 0 || statusColumn < 0) {
+    throw new Error("The published spreadsheet needs “Email Address” and “Status” columns.");
+  }
+  const matchingRow = rows.slice().reverse().find((values) => (
+    (values[emailColumn] ?? "").trim().toLowerCase() === email.trim().toLowerCase()
+  ));
+  if (!matchingRow) return null;
+
+  const recordedStatus = (matchingRow[statusColumn] ?? "").trim();
+  const status = recordedStatus || "Pending";
+  const normalizedStatus = status.toLocaleLowerCase();
+  const kind = normalizedStatus === "accepted"
+    ? "accepted"
+    : normalizedStatus === "pending" || !recordedStatus
+      ? "pending"
+      : "other";
+  const detail = !recordedStatus
+    ? "No review status has been entered yet; this demo shows it as pending."
+    : kind === "accepted"
+      ? "Your application is marked as accepted."
+      : kind === "pending"
+        ? "Your application is awaiting review."
+        : "This is the latest status listed for your application.";
+  return { kind, status, detail };
+}
+
+function showStatus(kind, status, detail) {
+  displayApplicationStatus(kind, status, detail);
+  statusFeedback.focus();
+}
+
+function setDemoAccount(email) {
+  sessionStorage.setItem(accountEmailStorageKey, email);
+  accountLoginTrigger.textContent = "My account";
+  accountLoginTrigger.setAttribute("aria-label", `Signed in as ${email}`);
+  accountLoginEmail.value = email;
+  inquiryEmailInput.value = email;
+}
+
+function showNoApplicationMessage(detail) {
+  showStatus("not-found", "No application found", detail);
+  inquiryForm.hidden = false;
+}
+
+async function checkAndDisplayAccount(email) {
+  statusCheckInProgress = true;
+  try {
+    const application = await lookupApplication(email);
+    if (application) {
+      showStatus(application.kind, application.status, application.detail);
+      inquiryForm.hidden = true;
+    } else {
+      showNoApplicationMessage("No inquiry is recorded for this email yet. You can complete the form below.");
+    }
+    return application;
+  } finally {
+    statusCheckInProgress = false;
+  }
+}
+
+accountLoginTrigger.addEventListener("click", () => {
+  const savedEmail = sessionStorage.getItem(accountEmailStorageKey);
+  accountLoginEmail.value = savedEmail || inquiryEmailInput.value;
+  accountLogoutButton.hidden = !savedEmail;
+  accountLoginFeedback.hidden = true;
+  accountLoginDialog.showModal();
+  accountLoginEmail.focus();
 });
+
+document.querySelector("#account-login-close").addEventListener("click", () => {
+  accountLoginDialog.close();
+});
+
+accountLogoutButton.addEventListener("click", () => {
+  sessionStorage.removeItem(accountEmailStorageKey);
+  accountLoginTrigger.textContent = "Account login";
+  accountLoginTrigger.removeAttribute("aria-label");
+  inquiryForm.hidden = false;
+  statusFeedback.hidden = true;
+  accountLoginDialog.close();
+});
+
+accountLoginDialog.addEventListener("click", (event) => {
+  if (event.target === accountLoginDialog) accountLoginDialog.close();
+});
+
+accountLoginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!accountLoginForm.reportValidity() || statusCheckInProgress) return;
+  const email = accountLoginEmail.value.trim();
+  accountLoginSubmit.disabled = true;
+  accountLoginFeedback.textContent = "Checking the published enrollment spreadsheet…";
+  accountLoginFeedback.hidden = false;
+  try {
+    await checkAndDisplayAccount(email);
+    setDemoAccount(email);
+    accountLogoutButton.hidden = false;
+    accountLoginDialog.close();
+    document.querySelector("#enrollment").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    console.error("Unable to check the application status.", error);
+    accountLoginFeedback.textContent = error.name === "AbortError"
+      ? "The status check timed out. Please try again."
+      : "The published spreadsheet could not be reached. Please try again before sending an inquiry.";
+  } finally {
+    accountLoginSubmit.disabled = false;
+  }
+});
+
+inquiryEmailInput.addEventListener("input", () => {
+  if (inquiryEmailInput.value.trim().toLowerCase() !== (sessionStorage.getItem(accountEmailStorageKey) || "").toLowerCase()) {
+    sessionStorage.removeItem(accountEmailStorageKey);
+    accountLoginTrigger.textContent = "Account login";
+    accountLoginTrigger.removeAttribute("aria-label");
+  }
+});
+
+inquiryForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!inquiryForm.reportValidity() || submissionInProgress || statusCheckInProgress) return;
+  const email = inquiryEmailInput.value.trim();
+  submitButton.disabled = true;
+  formFeedback.textContent = "Checking for an existing inquiry before sending…";
+  formFeedback.hidden = false;
+
+  try {
+    const application = await lookupApplication(email);
+    if (application) {
+      showStatus(application.kind, application.status, "An inquiry with this email is already recorded. No duplicate inquiry was sent.");
+      inquiryForm.hidden = true;
+      return;
+    }
+
+    showNoApplicationMessage("No previous inquiry was found. Your inquiry is being sent now.");
+    formFeedback.textContent = "Sending your inquiry to Google Forms…";
+    formFeedback.hidden = false;
+    submissionInProgress = true;
+    HTMLFormElement.prototype.submit.call(inquiryForm);
+  } catch (error) {
+    console.error("Unable to check for an existing inquiry.", error);
+    showStatus(
+      "unavailable",
+      "Unable to verify",
+      error.name === "AbortError"
+        ? "The spreadsheet check timed out. Your inquiry was not sent; please try again."
+        : "The spreadsheet could not be reached. Your inquiry was not sent; please try again later or contact the academy.",
+    );
+    formFeedback.textContent = "Your inquiry was not sent because the duplicate check could not be completed.";
+    formFeedback.hidden = false;
+  } finally {
+    if (!submissionInProgress) submitButton.disabled = false;
+  }
+});
+
+const savedAccountEmail = sessionStorage.getItem(accountEmailStorageKey);
+if (savedAccountEmail) {
+  setDemoAccount(savedAccountEmail);
+  checkAndDisplayAccount(savedAccountEmail).catch((error) => {
+    console.error("Unable to restore the demo account status.", error);
+    showStatus("unavailable", "Status unavailable", "The spreadsheet could not be reached. Retry the account status check before sending an inquiry.");
+  });
+}
 
 responseFrame.addEventListener("load", () => {
   if (!submissionInProgress) return;
 
   submissionInProgress = false;
   submitButton.disabled = false;
-  formFeedback.textContent = "Your inquiry was sent to Google Forms. This page is still open.";
+  formFeedback.replaceChildren(
+    document.createTextNode("Google Forms may require sign-in, and this page cannot confirm whether your inquiry was accepted. If prompted, open the form directly or contact the academy: "),
+  );
+  const formLink = document.createElement("a");
+  formLink.href = "https://docs.google.com/forms/d/e/1FAIpQLSd4diHGpYbc2F1xBsvnhcep1Gwej70uXtsUgeBL7k_y_dfuPQ/viewform";
+  formLink.target = "_blank";
+  formLink.rel = "noopener noreferrer";
+  formLink.textContent = "open the Google Form";
+  formFeedback.append(formLink, document.createTextNode(" or email deehwaliongacademy@gmail.com."));
   formFeedback.focus();
 });
 
@@ -300,6 +549,52 @@ function setupCarousel(root, items, kind) {
   showSlide(0);
 }
 
+function renderFeaturedClubs(clubs) {
+  const grid = document.querySelector("[data-clubs]");
+  if (!Array.isArray(clubs) || clubs.length === 0) {
+    throw new Error("The featured clubs list needs at least one entry in content.json.");
+  }
+
+  const cards = clubs.map((club) => {
+    const card = makeElement("article", "club-card");
+    const logoFrame = makeElement("div", "club-logo-frame");
+    const logo = makeElement("img", "club-logo");
+    logo.src = club.logo;
+    logo.alt = club.logoAlt;
+    logo.loading = "lazy";
+    logo.decoding = "async";
+    logo.draggable = false;
+    logoFrame.append(logo);
+
+    const content = makeElement("div", "club-content");
+    content.append(
+      makeElement("span", "club-category", club.category),
+      makeElement("h3", "", club.name),
+      makeElement("p", "", club.description),
+    );
+    card.append(logoFrame, content);
+    return card;
+  });
+
+  grid.replaceChildren(...cards);
+  if (!prefersReducedMotion && "IntersectionObserver" in window) {
+    const clubRevealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -35px 0px" });
+
+    cards.forEach((card, index) => {
+      card.dataset.reveal = "";
+      card.style.transitionDelay = `${Math.min(index, 3) * 70}ms`;
+      clubRevealObserver.observe(card);
+    });
+  }
+}
+
 async function loadSchoolContent() {
   try {
     const response = await fetch("content.json");
@@ -311,12 +606,18 @@ async function loadSchoolContent() {
     setupCarousel(document.querySelector('[data-carousel="news"]'), content.news, "news");
     setupCarousel(document.querySelector('[data-carousel="events"]'), content.events, "events");
     setupCarousel(document.querySelector('[data-carousel="gallery"]'), content.gallery, "gallery");
+    renderFeaturedClubs(content.clubs);
   } catch (error) {
     console.error("Unable to load the school news, events, and gallery.", error);
     document.querySelectorAll(".carousel-message").forEach((message) => {
       message.textContent = "School updates could not be loaded. Please refresh the page to try again.";
       message.classList.add("carousel-load-error");
     });
+    const clubsMessage = document.querySelector("[data-clubs] .club-message");
+    if (clubsMessage) {
+      clubsMessage.textContent = "Featured clubs could not be loaded. Please refresh the page to try again.";
+      clubsMessage.classList.add("carousel-load-error");
+    }
   }
 }
 
