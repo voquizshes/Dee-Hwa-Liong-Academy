@@ -120,11 +120,13 @@ const accountLoginTrigger = document.querySelector("#account-login-trigger");
 const accountLoginDialog = document.querySelector("#account-login-dialog");
 const accountLoginForm = document.querySelector("#account-login-form");
 const accountLoginEmail = document.querySelector("#account-login-email");
+const accountLoginEmailField = document.querySelector("#account-login-email-field");
 const accountLoginSubmit = document.querySelector("#account-login-submit");
 const accountLogoutButton = document.querySelector("#account-logout");
 const accountLoginFeedback = document.querySelector("#account-login-feedback");
 let submissionInProgress = false;
 let statusCheckInProgress = false;
+let accountStatusRefreshTimer = null;
 
 function updateStrandField() {
   const isSeniorHigh = gradeSelect.value === "SHS";
@@ -143,6 +145,7 @@ updateStrandField();
 const applicationStatusCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdLE3Iwag4JTKcZs8JPrwL2Gj4L9eQG6GycI-1BOqQMvcEzcozHvYJ7lVTk_rUJW5NmSS2Bx3JAO-t/pub?output=csv";
 const inquiryEmailInput = inquiryForm.querySelector("#email");
 const accountEmailStorageKey = "dhla-demo-account-email";
+const accountStatusRefreshInterval = 5000;
 
 function parseCsvRows(csv) {
   const rows = [];
@@ -187,10 +190,24 @@ function parseCsvRows(csv) {
 }
 
 function displayApplicationStatus(kind, status, detail) {
-  statusFeedback.className = `status-feedback status-${kind}`;
-  const badge = makeElement("span", "status-badge", status);
-  const message = makeElement("p", "status-detail", detail);
-  statusFeedback.replaceChildren(badge, message);
+  const statusKey = JSON.stringify([kind, status, detail]);
+  if (statusFeedback.dataset.statusKey !== statusKey) {
+    statusFeedback.className = `status-feedback status-${kind}`;
+    statusFeedback.setAttribute("role", "region");
+    statusFeedback.setAttribute("aria-label", "Enrollment application status");
+    const badge = makeElement("span", "status-badge", status);
+    const message = makeElement("p", "status-detail", detail);
+    message.setAttribute("role", "status");
+    message.setAttribute("aria-live", "polite");
+    const updated = makeElement("span", "status-updated");
+    updated.setAttribute("aria-live", "off");
+    statusFeedback.replaceChildren(badge, message, updated);
+    statusFeedback.dataset.statusKey = statusKey;
+  }
+  const updated = statusFeedback.querySelector(".status-updated");
+  updated.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} · auto-refreshes every 5 seconds`;
+  updated.classList.remove("is-stale");
+  updated.removeAttribute("title");
   statusFeedback.hidden = false;
 }
 
@@ -240,33 +257,43 @@ async function lookupApplication(email) {
   return { kind, status, detail };
 }
 
-function showStatus(kind, status, detail) {
+function showStatus(kind, status, detail, { focus = true } = {}) {
   displayApplicationStatus(kind, status, detail);
-  statusFeedback.focus();
+  if (focus) statusFeedback.focus();
 }
 
 function setDemoAccount(email) {
-  sessionStorage.setItem(accountEmailStorageKey, email);
+  localStorage.setItem(accountEmailStorageKey, email);
   accountLoginTrigger.textContent = "My account";
   accountLoginTrigger.setAttribute("aria-label", `Signed in as ${email}`);
   accountLoginEmail.value = email;
+  accountLoginEmail.readOnly = true;
+  accountLoginEmailField.hidden = true;
+  accountLoginSubmit.disabled = true;
+  accountLoginSubmit.hidden = true;
+  accountLogoutButton.hidden = false;
   inquiryEmailInput.value = email;
+  inquiryEmailInput.readOnly = true;
 }
 
-function showNoApplicationMessage(detail) {
-  showStatus("not-found", "No application found", detail);
+function showNoApplicationMessage(detail, { focus = true } = {}) {
+  showStatus("not-found", "No application found", detail, { focus });
   inquiryForm.hidden = false;
 }
 
-async function checkAndDisplayAccount(email) {
+async function checkAndDisplayAccount(email, { focus = true, requireSavedAccount = false } = {}) {
+  if (statusCheckInProgress) return null;
   statusCheckInProgress = true;
   try {
     const application = await lookupApplication(email);
+    if (requireSavedAccount && localStorage.getItem(accountEmailStorageKey)?.toLowerCase() !== email.toLowerCase()) {
+      return null;
+    }
     if (application) {
-      showStatus(application.kind, application.status, application.detail);
+      showStatus(application.kind, application.status, application.detail, { focus });
       inquiryForm.hidden = true;
     } else {
-      showNoApplicationMessage("No inquiry is recorded for this email yet. You can complete the form below.");
+      showNoApplicationMessage("No inquiry is recorded for this email yet. You can complete the form below.", { focus });
     }
     return application;
   } finally {
@@ -274,10 +301,43 @@ async function checkAndDisplayAccount(email) {
   }
 }
 
+function stopAccountStatusRefresh() {
+  if (accountStatusRefreshTimer !== null) {
+    window.clearInterval(accountStatusRefreshTimer);
+    accountStatusRefreshTimer = null;
+  }
+}
+
+function startAccountStatusRefresh(email) {
+  stopAccountStatusRefresh();
+  accountStatusRefreshTimer = window.setInterval(async () => {
+    if (statusCheckInProgress || localStorage.getItem(accountEmailStorageKey)?.toLowerCase() !== email.toLowerCase()) return;
+
+    try {
+      await checkAndDisplayAccount(email, { focus: false, requireSavedAccount: true });
+    } catch (error) {
+      console.error("Unable to refresh the application status.", error);
+      if (localStorage.getItem(accountEmailStorageKey)?.toLowerCase() === email.toLowerCase()) {
+        const updated = statusFeedback.querySelector(".status-updated");
+        if (updated) {
+          updated.textContent = "Could not refresh; retrying in 5 seconds";
+          updated.title = error.message;
+          updated.classList.add("is-stale");
+        }
+      }
+    }
+  }, accountStatusRefreshInterval);
+}
+
 accountLoginTrigger.addEventListener("click", () => {
-  const savedEmail = sessionStorage.getItem(accountEmailStorageKey);
+  const savedEmail = localStorage.getItem(accountEmailStorageKey);
   accountLoginEmail.value = savedEmail || inquiryEmailInput.value;
+  accountLoginEmail.readOnly = Boolean(savedEmail);
+  accountLoginEmailField.hidden = Boolean(savedEmail);
+  accountLoginSubmit.disabled = Boolean(savedEmail);
+  accountLoginSubmit.hidden = Boolean(savedEmail);
   accountLogoutButton.hidden = !savedEmail;
+  accountLoginFeedback.textContent = "";
   accountLoginFeedback.hidden = true;
   accountLoginDialog.showModal();
   accountLoginEmail.focus();
@@ -288,11 +348,22 @@ document.querySelector("#account-login-close").addEventListener("click", () => {
 });
 
 accountLogoutButton.addEventListener("click", () => {
-  sessionStorage.removeItem(accountEmailStorageKey);
+  stopAccountStatusRefresh();
+  localStorage.removeItem(accountEmailStorageKey);
   accountLoginTrigger.textContent = "Account login";
   accountLoginTrigger.removeAttribute("aria-label");
+  accountLoginEmail.value = "";
+  accountLoginEmail.readOnly = false;
+  accountLoginEmailField.hidden = false;
+  accountLoginSubmit.disabled = false;
+  accountLoginSubmit.hidden = false;
+  accountLogoutButton.hidden = true;
+  inquiryEmailInput.value = "";
+  inquiryEmailInput.readOnly = false;
   inquiryForm.hidden = false;
   statusFeedback.hidden = true;
+  statusFeedback.replaceChildren();
+  delete statusFeedback.dataset.statusKey;
   accountLoginDialog.close();
 });
 
@@ -302,6 +373,8 @@ accountLoginDialog.addEventListener("click", (event) => {
 
 accountLoginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const savedEmail = localStorage.getItem(accountEmailStorageKey);
+  if (savedEmail) return;
   if (!accountLoginForm.reportValidity() || statusCheckInProgress) return;
   const email = accountLoginEmail.value.trim();
   accountLoginSubmit.disabled = true;
@@ -310,7 +383,7 @@ accountLoginForm.addEventListener("submit", async (event) => {
   try {
     await checkAndDisplayAccount(email);
     setDemoAccount(email);
-    accountLogoutButton.hidden = false;
+    startAccountStatusRefresh(email);
     accountLoginDialog.close();
     document.querySelector("#enrollment").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (error) {
@@ -320,14 +393,6 @@ accountLoginForm.addEventListener("submit", async (event) => {
       : "The published spreadsheet could not be reached. Please try again before sending an inquiry.";
   } finally {
     accountLoginSubmit.disabled = false;
-  }
-});
-
-inquiryEmailInput.addEventListener("input", () => {
-  if (inquiryEmailInput.value.trim().toLowerCase() !== (sessionStorage.getItem(accountEmailStorageKey) || "").toLowerCase()) {
-    sessionStorage.removeItem(accountEmailStorageKey);
-    accountLoginTrigger.textContent = "Account login";
-    accountLoginTrigger.removeAttribute("aria-label");
   }
 });
 
@@ -368,12 +433,18 @@ inquiryForm.addEventListener("submit", async (event) => {
   }
 });
 
-const savedAccountEmail = sessionStorage.getItem(accountEmailStorageKey);
+const savedAccountEmail = localStorage.getItem(accountEmailStorageKey);
 if (savedAccountEmail) {
   setDemoAccount(savedAccountEmail);
+  startAccountStatusRefresh(savedAccountEmail);
   checkAndDisplayAccount(savedAccountEmail).catch((error) => {
     console.error("Unable to restore the demo account status.", error);
-    showStatus("unavailable", "Status unavailable", "The spreadsheet could not be reached. Retry the account status check before sending an inquiry.");
+    showStatus("unavailable", "Status unavailable", "The spreadsheet could not be reached. Automatic checks will retry every 5 seconds.");
+    const updated = statusFeedback.querySelector(".status-updated");
+    if (updated) {
+      updated.textContent = "Could not refresh; retrying in 5 seconds";
+      updated.classList.add("is-stale");
+    }
   });
 }
 
@@ -399,6 +470,16 @@ function makeElement(tagName, className, text) {
   if (className) element.className = className;
   if (text) element.textContent = text;
   return element;
+}
+
+function makeIcon(name, className = "icon") {
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+  icon.classList.add(...className.split(" "));
+  icon.setAttribute("aria-hidden", "true");
+  use.setAttribute("href", `#icon-${name}`);
+  icon.append(use);
+  return icon;
 }
 
 function createCarouselCard(item, index, total, kind) {
@@ -441,10 +522,11 @@ function createCarouselCard(item, index, total, kind) {
   const description = makeElement("p", "", item.description);
   content.append(meta, title, description);
   if (item.link && item.linkLabel) {
-    const link = makeElement("a", "update-link", `${item.linkLabel} ↗`);
+    const link = makeElement("a", "update-link");
     link.href = item.link;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
+    link.append(document.createTextNode(item.linkLabel), makeIcon("arrow-up-right"));
     content.append(link);
   }
 
